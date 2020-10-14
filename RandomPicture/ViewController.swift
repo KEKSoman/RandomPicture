@@ -1,16 +1,24 @@
-//
-//  ViewController.swift
-//  RandomPicture
-//
-//  Created by Евгений колесников on 14.10.2020.
-//
-
 import UIKit
 
+class MyJon: Codable {
+    var number = ""
+    var language = ""
+    var insult = ""
+    var created = ""
+    var shown = ""
+    var createdby = ""
+    var active = ""
+    var comment = ""
+}
+
 class ViewController: UIViewController {
+    
     private let imageUrl = "https://picsum.photos/200"
+    private let unsultUrl = "https://evilinsult.com/generate_insult.php?lang=en&type=json"
+    
     @IBOutlet var button: UIButton!
     @IBOutlet var imageView: UIImageView!
+    @IBOutlet var messageLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +27,7 @@ class ViewController: UIViewController {
 
     @IBAction func actionButton() {
         fetchImage()
+        insultMessag()
     }
     private func fetchImage(){
         guard let url = URL(string: imageUrl) else { return }
@@ -38,5 +47,37 @@ class ViewController: UIViewController {
         }
         }.resume()
     }
+    
+    private func insultMessag(){
+        guard let insultMsg = URL(string: unsultUrl) else { return }
+        
+        URLSession.shared.dataTask(with: insultMsg) { (data, response, error) in
+            if  let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            if let response = response {
+                print(response)
+            }
+            guard let data = data else { return }
+            DispatchQueue.main.async {
+            do{
+                let message = try JSONDecoder().decode(MyJon.self, from: data)
+                
+                self.messageLabel.text = message.insult
+            } catch let error{
+                print(error)
+            }
+            }
+        }.resume()
+        
+        
+            
+    }
+   
+    
 }
+
+
+
 
