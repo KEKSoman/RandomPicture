@@ -1,4 +1,5 @@
 import UIKit
+import AVFoundation
 
 class MyJon: Codable {
     var number = ""
@@ -65,6 +66,11 @@ class ViewController: UIViewController {
                 let message = try JSONDecoder().decode(MyJon.self, from: data)
                 
                 self.messageLabel.text = message.insult
+                
+                let synthesizer = AVSpeechSynthesizer()
+                let utterance = AVSpeechUtterance(string: self.messageLabel.text!)
+                //utterance.voice = AVSpeechSynthesisVoice(language: "ru-RU")
+                synthesizer.speak(utterance)
             } catch let error{
                 print(error)
             }
@@ -74,7 +80,7 @@ class ViewController: UIViewController {
         
             
     }
-   
+    
     
 }
 
